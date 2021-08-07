@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+{% import "bootstrap/wtf.html" as wtf %}
+<title>{% block title %}Shortener{% endblock %}</title>
+{% block page_content %}
+<div class="page-header">
+    <a>Heoll</a>
+</div>
+{{ wtf.quick_form(form) }}
+{% endblock %}
+</html>
