@@ -43,7 +43,16 @@ def index():
     form = LinkForm()
     if form.validate_on_submit():
         link = form.link.data
+
     return render_template('index.html', form=form, link=link)
+
+
+def short_url_creator():
+    return ''.join([random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM')) for x in range(7)])
+
 
 if __name__ == '__main__':
     app.run()
+
+
+print(short_url_creator())
