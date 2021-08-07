@@ -4,7 +4,8 @@
 <title>{% block title %}Shortener{% endblock %}</title>
 {% block page_content %}
 <div class="page-header">
-    <a>Heoll</a>
+    <a>{{ link }}</a>
+    <a>{{ link2 }}</a>
 </div>
 {{ wtf.quick_form(form) }}
 {% endblock %}
