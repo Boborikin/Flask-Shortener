@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Regexp
 import os
 import random
@@ -13,25 +13,26 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'ddfgfddfdfgd'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'test'
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 
+
 class LinkForm(FlaskForm):
     link = StringField('Shorten your link:', validators=[DataRequired(),
-                Regexp("^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$"
+                Regexp("^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.%]*$"
                        , 0, 'Unable to shorten that link. It is not a valid url.')])
+    #expiration = SelectField('Expiration Time:', choices=[('5', '5 Minutes'), ('py', 'Python'), ('text', 'Plain Text')])
     submit = SubmitField('Shorten')
-
 
 
 class Link(db.Model):
     __tablename__ = 'links'
     id = db.Column(db.Integer, primary_key=True)
     original_link = db.Column(db.Text)
-    short_link = db.Column(db.Text)
-    creation_date = db.Column(db.DATETIME(6))
-    expiration_date = db.Column(db.DATETIME(6))
+    short_link = db.Column(db.Text, unique=True)
+    creation_date = db.Column(db.DATETIME())
+    expiration_date = db.Column(db.DATETIME())
 
     def __repr__(self):
         return '<Link %r>' % self.original_link
@@ -41,7 +42,7 @@ class Link(db.Model):
 def index():
     form = LinkForm()
     original_link = None
-    short_link = None
+    short_link = ''
     if form.validate_on_submit():
         original_link = form.link.data
         if 'http://' not in original_link and 'https://' not in original_link:
@@ -51,7 +52,7 @@ def index():
         db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date))
         db.session.commit()
 
-    return render_template('index.html', form=form, link=original_link, link2=short_link)
+    return render_template('index.html', form=form, link=short_link)
 
 @app.route('/<code>')
 def redirector(code):
