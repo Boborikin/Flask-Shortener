@@ -2,8 +2,8 @@ from flask import Flask, render_template, redirect, abort
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Regexp
+from wtforms import StringField, SubmitField, SelectField, PasswordField, BooleanField
+from wtforms.validators import DataRequired, Regexp, Email, Length
 import os
 import random
 import datetime
@@ -28,6 +28,13 @@ class LinkForm(FlaskForm):
     submit = SubmitField('Shorten')
 
 
+class LoginForm(FlaskForm):
+    email = StringField('Email:', validators=[Length(1, 64), Email()], render_kw={"placeholder": "email"})
+    password = PasswordField('Password:', validators=[DataRequired()],  render_kw={"placeholder": "password"})
+    remember_me = BooleanField('Keep me logged in')
+    submit = SubmitField('Log In')
+
+
 class Link(db.Model):
     __tablename__ = 'links'
     id = db.Column(db.Integer, primary_key=True)
@@ -38,7 +45,7 @@ class Link(db.Model):
     expiration_date = db.Column(db.DATETIME())
 
     def __repr__(self):
-        return '<Link> %r' % self.original_link
+        return '<Link %r>' % self.original_link
 
 
 @app.errorhandler(404)
@@ -85,6 +92,10 @@ def redirector(code):
         clicks(url)
         return redirect(original_link, 302)
 
+@app.route('/login')
+def login():
+    form = LoginForm()
+    return render_template('login.html', form=form)
 
 def short_url_creator():
     return 'http://127.0.0.1:5000/'+''.join([random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM')) for x in range(7)])
