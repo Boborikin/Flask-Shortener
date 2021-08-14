@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Regexp, Email, Length, EqualTo, InputRequired
+from wtforms.validators import DataRequired, Regexp, Email, Length, EqualTo
 import os
 import random
 import datetime
@@ -44,8 +44,10 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     email = StringField('Email:', validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "email"})
     username = StringField('Username', validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": 'username'})
-    password = PasswordField('Password', validators=[DataRequired(), EqualTo('password_confirm', message="Passwords must match")])
-    password_confirm = PasswordField('Confirm password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), EqualTo('password_confirm',
+            message=("Passwords must match"))], render_kw={"placeholder": 'password'})
+    password_confirm = PasswordField('Confirm password', validators=[DataRequired()],
+                                     render_kw={"placeholder": 'confirm password'})
     submit = SubmitField('Register')
 
 
@@ -159,8 +161,7 @@ def login():
 def register():
     form = SignupForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data, username=form.username.data, password=form.password.data)
-        db.session.add(user)
+        db.session.add(email=form.email.data, username=form.username.data, password=form.password.data)
         db.session.commit()
         db.session.close()
         flash('You can now login.')
