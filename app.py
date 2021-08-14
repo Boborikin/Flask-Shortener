@@ -8,6 +8,7 @@ from wtforms.validators import DataRequired, Regexp, Email, Length, EqualTo
 import os
 import random
 import datetime
+from dateutil.relativedelta import relativedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_required, login_user
 
@@ -30,7 +31,7 @@ class LinkForm(FlaskForm):
                        , 0, 'Unable to shorten that link. It is not a valid url.')])
     expiration = SelectField('Expiration Time:', choices=[('5m', '5 Minutes'), ('10m', '10 Minutes'), ('15m', '15 Minutes'),
     ('30m', '30 Minutes'), ('1h', '1 Hour'), ('2h', '2 Hours'), ('4h', '4 Hours'), ('8h', '8 Hours'), ('12h', '12 Hours'),
-                             ('1d', '1 Day'), ('7d', '7 Days')])
+                             ('1d', '1 Day'), ('7d', '7 Days'), ('1M', '1 Month'), ('6M', '6 Months'), ('1y', '1 Year')])
     submit = SubmitField('Shorten')
 
 
@@ -123,6 +124,12 @@ def index():
         elif 'd' in expiration_time:
             expiration_time = int(expiration_time.rstrip('d'))
             expiration_date = creation_date + datetime.timedelta(days=expiration_time)
+        elif 'M' in expiration_time:
+            expiration_time = int(expiration_time.rstrip('M'))
+            expiration_date = creation_date + relativedelta(months=expiration_time)
+        elif 'y' in expiration_time:
+            expiration_time = int(expiration_time.rstrip('y'))
+            expiration_date = creation_date + relativedelta(years=expiration_time)
         db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
                             expiration_date=expiration_date))
         db.session.commit()
