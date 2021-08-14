@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, abort
+import flask
+from flask import Flask, render_template, redirect, abort, request, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -7,8 +8,11 @@ from wtforms.validators import DataRequired, Regexp, Email, Length
 import os
 import random
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_required, login_user
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+login_manager = LoginManager()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
@@ -16,6 +20,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'test'
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
+login_manager.init_app(app)
+
 
 
 class LinkForm(FlaskForm):
@@ -48,9 +54,42 @@ class Link(db.Model):
         return '<Link %r>' % self.original_link
 
 
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+
+    @property
+    def password(self):
+        raise AttributeError('password is not readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return '<User %r>' % self.usernane
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+@app.route('/secret')
+@login_required
+def secret():
+    return 'Only authenticated users are allowed!'
+
+
 @app.errorhandler(404)
 def page_not_found(error):
-   return render_template('404.html', title='404'), 404
+   return render_template('404.html', title='Page not found'), 404
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -92,10 +131,21 @@ def redirector(code):
         clicks(url)
         return redirect(original_link, 302)
 
-@app.route('/login')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None and user.verify_password(form.password.data):
+            login_user(user, form.remember_me.data)
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('index')
+            return redirect(next)
+        flash('Invalid username or password')
     return render_template('login.html', form=form)
+
 
 def short_url_creator():
     return 'http://127.0.0.1:5000/'+''.join([random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM')) for x in range(7)])
