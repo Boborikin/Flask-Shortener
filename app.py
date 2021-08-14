@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Regexp, Email, Length
+from wtforms.validators import DataRequired, Regexp, Email, Length, EqualTo, InputRequired
 import os
 import random
 import datetime
@@ -39,6 +39,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password:', validators=[DataRequired()],  render_kw={"placeholder": "password"})
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
+
+
+class SignupForm(FlaskForm):
+    email = StringField('Email:', validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "email"})
+    username = StringField('Username', validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": 'username'})
+    password = PasswordField('Password', validators=[DataRequired(), EqualTo('password_confirm', message="Passwords must match")])
+    password_confirm = PasswordField('Confirm password', validators=[DataRequired()])
+    submit = SubmitField('Register')
 
 
 class Link(db.Model):
@@ -145,6 +153,19 @@ def login():
             return redirect(next)
         flash('Invalid username or password')
     return render_template('login.html', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = SignupForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data, username=form.username.data, password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        db.session.close()
+        flash('You can now login.')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
 
 def short_url_creator():
