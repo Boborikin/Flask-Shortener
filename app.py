@@ -10,7 +10,8 @@ import random
 import datetime
 from dateutil.relativedelta import relativedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_required, login_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, AnonymousUserMixin
+from flask_migrate import Migrate
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 login_manager = LoginManager()
@@ -22,7 +23,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'test'
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager.init_app(app)
-
+migrate = Migrate(app, db)
 
 
 class LinkForm(FlaskForm):
@@ -32,6 +33,7 @@ class LinkForm(FlaskForm):
     expiration = SelectField('Expiration Time:', choices=[('5m', '5 Minutes'), ('10m', '10 Minutes'), ('15m', '15 Minutes'),
     ('30m', '30 Minutes'), ('1h', '1 Hour'), ('2h', '2 Hours'), ('4h', '4 Hours'), ('8h', '8 Hours'), ('12h', '12 Hours'),
                              ('1d', '1 Day'), ('7d', '7 Days'), ('1M', '1 Month'), ('6M', '6 Months'), ('1y', '1 Year')])
+
     submit = SubmitField('Shorten')
 
 
@@ -60,6 +62,7 @@ class Link(db.Model):
     clicks = db.Column(db.Integer, nullable=False, default=0)
     creation_date = db.Column(db.DATETIME())
     expiration_date = db.Column(db.DATETIME())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return '<Link %r>' % self.original_link
@@ -71,6 +74,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    link = db.relationship('Link', backref='users')
 
     @property
     def password(self):
@@ -97,6 +101,10 @@ def load_user(user_id):
 def secret():
     return 'Only authenticated users are allowed!'
 
+@app.route('/stats')
+@login_required
+def stats():
+    return 'Only authenticated users are allowed!'
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -130,10 +138,15 @@ def index():
         elif 'y' in expiration_time:
             expiration_time = int(expiration_time.rstrip('y'))
             expiration_date = creation_date + relativedelta(years=expiration_time)
+
+        if current_user.is_authenticated:
+            db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
+                                expiration_date=expiration_date, user_id=current_user.id))
+
         db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
-                            expiration_date=expiration_date))
+                                expiration_date=expiration_date, user_id=None))
+        db.session.flush()
         db.session.commit()
-        db.session.close()
 
     return render_template('index.html', form=form, link=short_link)
 
@@ -168,7 +181,7 @@ def login():
 def register():
     form = SignupForm()
     if form.validate_on_submit():
-        db.session.add(email=form.email.data, username=form.username.data, password=form.password.data)
+        db.session.add(User(email=form.email.data, username=form.username.data, password=form.password.data))
         db.session.commit()
         db.session.close()
         flash('You can now login.')
@@ -188,4 +201,3 @@ def clicks(url):
 
 if __name__ == '__main__':
     app.run()
-
