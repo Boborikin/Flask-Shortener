@@ -10,21 +10,29 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Short</th>
+                <th scope="col">№</th>
+                <th scope="col">Short link</th>
                 <th scope="col">Original</th>
                 <th scope="col">Clicks</th>
                 <th scope="col">Creation Date</th>
+                <th scope="col">Expiration Date</th>
+                <th scope="col">Active</th>
             </tr>
         </thead>
         <tbody>
             {% for link, number in links_and_numbers %}
                 <tr>
                     <th scope="row">{{ number }}</th>
-                    <td>{{ link.short_link }}</td>
-                    <td>{{ link.original_link }}</td>
+                    <td><a href="{{ link.short_link }}">{{ link.short_link }}</a></td>
+                    <td><a href="{{ link.original_link }}">{{ link.original_link }}</a></td>
                     <td>{{  link.clicks }}</td>
                     <td>{{ link.creation_date.strftime('%Y-%m-%d %H:%M:%S') }} </td>
+                    <td>{{ link.expiration_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    {% if link.expiration_date < datetime_now %}
+                        <td>No</td>
+                    {% else %}
+                        <td>Yes</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
