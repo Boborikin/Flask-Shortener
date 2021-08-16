@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, AnonymousUserMixin
 from flask_migrate import Migrate
 
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 login_manager = LoginManager()
 app = Flask(__name__)
@@ -47,7 +48,7 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     email = StringField('Email:', validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "email"})
     username = StringField('Username', validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": 'username'})
-    password = PasswordField('Password', validators=[DataRequired(), EqualTo('password_confirm',
+    password = PasswordField('Password', validators=[DataRequired(), Length(6, 50), EqualTo('password_confirm',
             message=("Passwords must match"))], render_kw={"placeholder": 'password'})
     password_confirm = PasswordField('Confirm password', validators=[DataRequired()],
                                      render_kw={"placeholder": 'confirm password'})
@@ -65,7 +66,7 @@ class Link(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
-        return '<Link %r>' % self.original_link
+        return '<Link %r %r %r %r>' % (self.original_link, self.short_link, self.clicks, self.creation_date)
 
 
 class User(UserMixin, db.Model):
@@ -88,7 +89,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User %r>' % self.usernane
+        return '<Username %r>, <Email %r>' % (self.username, self.email)
 
 
 @login_manager.user_loader
@@ -96,15 +97,15 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/secret')
-@login_required
-def secret():
-    return 'Only authenticated users are allowed!'
-
 @app.route('/stats')
 @login_required
 def stats():
-    return 'Only authenticated users are allowed!'
+    username = current_user.username
+    links = Link.query.join(User, Link.user_id == User.id).filter(Link.user_id == current_user.id).all()
+    numbers = [i+1 for i in range(0, len(links))]
+    links_and_numbers = zip(links, numbers)
+    return render_template('stats.html', username=username, links_and_numbers=links_and_numbers)
+
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -142,8 +143,8 @@ def index():
         if current_user.is_authenticated:
             db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
                                 expiration_date=expiration_date, user_id=current_user.id))
-
-        db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
+        else:
+            db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
                                 expiration_date=expiration_date, user_id=None))
         db.session.flush()
         db.session.commit()
@@ -187,6 +188,14 @@ def register():
         flash('You can now login.')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+
+@app.cli.command()
+def test():
+    """Run the unit tests."""
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
 
 
 def short_url_creator():
