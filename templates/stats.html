@@ -24,7 +24,7 @@
                     <td>{{ link.short_link }}</td>
                     <td>{{ link.original_link }}</td>
                     <td>{{  link.clicks }}</td>
-                    <td>{{ link.creation_date }}</td>
+                    <td>{{ link.creation_date.strftime('%Y-%m-%d %H:%M:%S') }} </td>
                 </tr>
             {% endfor %}
         </tbody>
