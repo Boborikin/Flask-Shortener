@@ -1,0 +1,32 @@
+
+#active-no {
+    background-color: #f94144;
+    color: white;
+    text-align: center;
+}
+#active-yes {
+    background-color: #43aa8b;
+    color: white;
+    text-align: center;
+}
+h1 {
+    font-family: sans-serif;
+    text-align: center;
+}
+
+table {
+    font-family: sans-serif;
+}
+td {
+    text-align: center;
+}
+
+#short_link {
+    text-align: left;
+}
+#original_link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 35ch;
+}

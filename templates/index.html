@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% include "base.html"  %}
 {% import "bootstrap/wtf.html" as wtf %}
 <link rel="stylesheet" type="text/css" href='/static/index.css'>
 <title>
@@ -10,9 +11,6 @@
         <h1>Hello, {{ current_user.username }}</h1>
         <h1>ID: {{ current_user.id }}</h1>
     {% endif %}
-    <a href="/login">Log In</a>
-    <a href="/register">Sign Up</a>
-    <a href="/stats">Statistics</a>
 <div class="page-header">
     <a href="{{ link }}">{{ link }}</a>
 </div>
