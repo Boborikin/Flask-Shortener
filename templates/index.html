@@ -7,10 +7,6 @@
     {% block title %}Shortener{% endblock %}
 </title>
 {% block page_content %}
-    {% if current_user %}
-        <h1>Hello, {{ current_user.username }}</h1>
-        <h1>ID: {{ current_user.id }}</h1>
-    {% endif %}
 <div class="page-header">
     <a href="{{ link }}">{{ link }}</a>
 </div>

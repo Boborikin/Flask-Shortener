@@ -12,8 +12,13 @@
 {% block navbar %}
     <div class="navbar">
     <ul>
-        <li><a href="/login" id="login">Log In</a></li>
-        <li><a href="/stats">Statistics</a></li>
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('logout') }}" id="logout">Log Out</a></li>
+        <li><a href="{{ url_for('stats') }}">Statistics</a></li>
+        {% else %}
+        <li><a href="{{ url_for('login') }}" id="login">Log In</a></li>
+        {% endif %}
+        <li><a href="/about">About</a></li>
         <li><a href="/register" id="signup">Sign Up</a></li>
     </ul>
     </div>

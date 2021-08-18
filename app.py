@@ -10,7 +10,7 @@ import random
 import datetime
 from dateutil.relativedelta import relativedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, AnonymousUserMixin
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, logout_user
 from flask_migrate import Migrate
 
 
@@ -178,6 +178,12 @@ def login():
             return redirect(next)
         flash('Invalid username or password')
     return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
