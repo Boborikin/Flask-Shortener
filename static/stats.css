@@ -16,6 +16,9 @@ h1 {
 
 table {
     font-family: sans-serif;
+    position: center;
+    margin: auto;
+    border-collapse: collapse;
 }
 td {
     text-align: center;
@@ -29,4 +32,8 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 35ch;
+}
+
+table, th, td {
+  border: 1px solid rgb(201, 225, 225);
 }

@@ -133,7 +133,7 @@ def index():
         elif char == 'h':
             expiration_date = creation_date + relativedelta(hours=count)
         elif char == 'd':
-            expiration_date = creation_date + datetime.timedelta(days=count)
+            expiration_date = creation_date + relativedelta(days=count)
         elif char == 'M':
             expiration_date = creation_date + relativedelta(months=count)
         elif char == 'y':
