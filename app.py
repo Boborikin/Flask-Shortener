@@ -126,21 +126,18 @@ def index():
             original_link = 'http://' + form.link.data
         short_link = short_url_creator()
         creation_date = datetime.datetime.now()
-        if 'm' in expiration_time:
-            expiration_time = int(expiration_time.rstrip('m'))
-            expiration_date = creation_date + datetime.timedelta(minutes=expiration_time)
-        elif 'h' in expiration_time:
-            expiration_time = int(expiration_time.rstrip('h'))
-            expiration_date = creation_date + datetime.timedelta(hours=expiration_time)
-        elif 'd' in expiration_time:
-            expiration_time = int(expiration_time.rstrip('d'))
-            expiration_date = creation_date + datetime.timedelta(days=expiration_time)
-        elif 'M' in expiration_time:
-            expiration_time = int(expiration_time.rstrip('M'))
-            expiration_date = creation_date + relativedelta(months=expiration_time)
-        elif 'y' in expiration_time:
-            expiration_time = int(expiration_time.rstrip('y'))
-            expiration_date = creation_date + relativedelta(years=expiration_time)
+        char = expiration_time[-1]
+        count = int(expiration_time.rstrip(char))
+        if char == 'm':
+            expiration_date = creation_date + relativedelta(minutes=count)
+        elif char == 'h':
+            expiration_date = creation_date + relativedelta(hours=count)
+        elif char == 'd':
+            expiration_date = creation_date + datetime.timedelta(days=count)
+        elif char == 'M':
+            expiration_date = creation_date + relativedelta(months=count)
+        elif char == 'y':
+            expiration_date = creation_date + relativedelta(years=count)
 
         if current_user.is_authenticated:
             db.session.add(Link(original_link=original_link, short_link=short_link, creation_date=creation_date,
