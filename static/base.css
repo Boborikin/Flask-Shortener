@@ -1,7 +1,11 @@
 body {
-    font-family: "Lato", sans-serif;
     padding: 0;
     margin: 0;
+}
+
+.navbar {
+    font-family: "sohne-var","Helvetica Neue","Arial", sans-serif;
+    font-weight: bold;
 }
 
 ul {
@@ -10,7 +14,8 @@ ul {
     padding: 10px;
     text-align: center;
     background-color: rgba(242, 250, 250, 0.30);
-    font-size: 13px;
+    font-size: 17px;
+
 }
 
 li {
@@ -33,10 +38,10 @@ a:hover {
 
 #login {
     float: right;
-    padding-right: 100px;
 }
 
 #logout {
     float: right;
-    padding-right: 100px;
+
 }
+

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
-    <title>
-
-    </title>
+    <link rel="icon" type="image" href="/static/favicon.ico"/>
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href='/static/base.css'>
+    {% block statics %}{% endblock %}
 </head>
 <body>
 {% block navbar %}
@@ -14,15 +14,17 @@
     <ul>
         {% if current_user.is_authenticated %}
         <li><a href="{{ url_for('logout') }}" id="logout">Log Out</a></li>
-        <li><a href="{{ url_for('stats') }}">Statistics</a></li>
         {% else %}
         <li><a href="{{ url_for('login') }}" id="login">Log In</a></li>
         {% endif %}
         <li><a href="/about">About</a></li>
-        <li><a href="/register" id="signup">Sign Up</a></li>
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('stats') }}">Statistics</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('register') }}" id="signup">Sign Up</a></li>
     </ul>
     </div>
-
 {% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>

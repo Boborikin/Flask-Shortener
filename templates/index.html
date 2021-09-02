@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include "base.html"  %}
-{% import "bootstrap/wtf.html" as wtf %}
-<link rel="stylesheet" type="text/css" href='/static/index.css'>
-<title>
-    {% block title %}Shortener{% endblock %}
-</title>
-{% block page_content %}
+{% extends "base.html"  %}
+{% block title %}Главная страница{% endblock %}
+{% block content %}
+{% block statics %}
+    <link rel="stylesheet" type="text/css" href='/static/index.css'>
+{% endblock %}
 <div class="page-header">
     <a href="{{ link }}">{{ link }}</a>
 </div>
-{{ wtf.quick_form(form) }}
+    {% for error in form.link.errors %}
+    <h3>{{ error }}</h3>
+    {% endfor %}
+    <section id="urlbox">
+        <form method="POST">
+    {{ form.csrf_token }}
+            <div id="formurl">
+                    {{ form.link.label }} {{ form.link }}
+            </div>
+        {{ form.expiration.label }} {{ form.expiration }}
+            <div id="formbutton">
+                {{ form.submit }}
+            </div>
+
+</form>
+    </section>
+
 {% endblock %}
 </html>

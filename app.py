@@ -46,12 +46,13 @@ class LoginForm(FlaskForm):
 
 
 class SignupForm(FlaskForm):
-    email = StringField('Email:', validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "email"})
-    username = StringField('Username', validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": 'username'})
-    password = PasswordField('Password', validators=[DataRequired(), Length(6, 50), EqualTo('password_confirm',
-            message=("Passwords must match"))], render_kw={"placeholder": 'password'})
-    password_confirm = PasswordField('Confirm password', validators=[DataRequired()],
-                                     render_kw={"placeholder": 'confirm password'})
+    email = StringField('Email:', validators=[DataRequired(), Length(1, 64), Email()])
+    username = StringField('Имя пользователя:', validators=[DataRequired(), Length(1, 64)])
+    password = PasswordField('Пароль:', validators=[DataRequired(),
+            Length(6, 50, "Пароль должен содержать больше %(min)d и меньше %(max)d символов"),
+            EqualTo('password_confirm',
+            message=("Пароль должен совпадать"))])
+    password_confirm = PasswordField('Подтверждение пароля:', validators=[DataRequired()])
     submit = SubmitField('Register')
 
 
