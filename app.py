@@ -39,9 +39,9 @@ class LinkForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email:', validators=[Length(1, 64), Email()], render_kw={"placeholder": "email"})
-    password = PasswordField('Password:', validators=[DataRequired()],  render_kw={"placeholder": "password"})
-    remember_me = BooleanField('Keep me logged in')
+    email = StringField('Email:', validators=[Length(1, 64), Email()])
+    password = PasswordField('Пароль:', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Log In')
 
 
