@@ -152,6 +152,7 @@ def index():
     return render_template('index.html', form=form, link=short_link)
 
 
+
 @app.route('/<code>')
 def redirector(code):
     url = Link.query.filter(Link.short_link.endswith(code)).first()
@@ -176,6 +177,7 @@ def login():
             return redirect(next)
         flash('Invalid username or password')
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 @login_required

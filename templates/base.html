@@ -12,17 +12,35 @@
 {% block navbar %}
     <div class="navbar">
     <ul>
+        {% if not current_user.is_authenticated %}
+        <li><a href="{{ url_for('register') }}" id="signup">
+            <img src="/static/sign_up.png" width="15" height="15" alt="" style="vertical-align:middle">
+            Регистрация
+        </a></li>
+        {% endif %}
         {% if current_user.is_authenticated %}
-        <li><a href="{{ url_for('logout') }}" id="logout">Log Out</a></li>
+        <li><a href="{{ url_for('logout') }}" id="logout">
+            <img src="/static/log-out.png" width="15" height="15" alt="" style="vertical-align:middle">
+            Выход
+        </a></li>
         {% else %}
-        <li><a href="{{ url_for('login') }}" id="login">Log In</a></li>
+        <li>
+            <a href="{{ url_for('login') }}" id="login">
+                <img src="/static/user.png" width="15" height="15" alt="" style="vertical-align:middle">
+                Вход
+            </a>
+        </li>
         {% endif %}
-        <li><a href="/about">About</a></li>
         {% if current_user.is_authenticated %}
-        <li><a href="{{ url_for('stats') }}">Statistics</a></li>
+        <li><a href="{{ url_for('stats') }}" id="stats">
+            <img src="/static/stats.png" width="13" height="13" alt="" style="vertical-align:middle">
+            Статистика
+        </a></li>
         {% endif %}
-        <li><a href="{{ url_for('register') }}" id="signup">Sign Up</a></li>
+        <li><a href="/about" id="about">О нас</a></li>
+
     </ul>
+    <hr>
     </div>
 {% endblock %}
 {% block content %}{% endblock %}

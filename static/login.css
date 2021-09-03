@@ -26,18 +26,7 @@ h2 {
 
 }
 
-.form-submit {
-    margin-top: -24px;
-    box-shadow: -0.187rem 0.125rem 1rem rgba(255, 146, 124, 0.45);
-    background-color: #f85130;
-    color: #fff;
-    font-size: 0.813rem;
-    font-weight: 700;
-    padding: 12px 19px;
-    border-radius: 28px;
-    vertical-align: middle;
 
-}
 .submit-button {
     display: inline-block;
     box-shadow: -0.187rem 0.125rem 1rem rgba(20, 107, 207, 0.45);

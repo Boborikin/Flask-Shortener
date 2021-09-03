@@ -10,10 +10,11 @@ body {
 
 ul {
     list-style-type: none;
-    margin: 0;
-    padding: 10px;
-    text-align: center;
-    background-color: rgba(242, 250, 250, 0.30);
+    margin-top: 0px;
+    padding-bottom: 30px;
+    padding-top: 15px;
+    text-align: inherit;
+    background-color: rgba(255, 255, 255, 0.30);
     font-size: 17px;
 
 }
@@ -24,12 +25,20 @@ li {
 
 a {
     text-decoration: none;
+    text-align: center;
 }
 
 #signup {
-    padding-right: 10px;
-    color: #2a5bd7;
+    display: inline-block;
+    background-color: #4895ef;
+    color: #fff;
+    font-size: 0.813rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 28px;
+    vertical-align: middle;
     float: right;
+    margin-right: 30%;
 }
 
 a:hover {
@@ -37,11 +46,53 @@ a:hover {
 }
 
 #login {
+    display: inline-block;
+    font-size: 0.813rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 28px;
     float: right;
+    color: #2e2e2e;
+    margin-left: 11.5%;
 }
 
 #logout {
+     display: inline-block;
+    background-color: #4895ef;
+    color: #fff;
+    font-size: 0.813rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 28px;
+    vertical-align: middle;
     float: right;
+    margin-right: 30%;
+    margin-left: 10%;
+}
 
+#stats {
+    display: inline-block;
+    font-size: 0.813rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 28px;
+    float: right;
+    color: #2e2e2e;
+    margin-right: 2%;
+}
+
+#about {
+    display: inline-block;
+    font-size: 0.813rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 28px;
+    float: right;
+    color: #2e2e2e;
+    margin-right: 2%;
+}
+
+hr {
+    color: rgba(249, 249, 249, 0.3);
 }
 
