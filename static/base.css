@@ -70,18 +70,7 @@ a:hover {
     margin-left: 10%;
 }
 
-#stats {
-    display: inline-block;
-    font-size: 0.813rem;
-    font-weight: 700;
-    padding: 10px 15px;
-    border-radius: 28px;
-    float: right;
-    color: #2e2e2e;
-    margin-right: 2%;
-}
-
-#about {
+#stats, #about {
     display: inline-block;
     font-size: 0.813rem;
     font-weight: 700;
