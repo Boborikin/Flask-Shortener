@@ -103,10 +103,8 @@ def load_user(user_id):
 def stats():
     username = current_user.username
     links = Link.query.join(User, Link.user_id == User.id).filter(Link.user_id == current_user.id).all()
-    numbers = [i+1 for i in range(0, len(links))]
-    links_and_numbers = zip(links, numbers)
     datetime_now = datetime.datetime.now()
-    return render_template('stats.html', username=username, links_and_numbers=links_and_numbers,
+    return render_template('stats.html', username=username, links=links,
                            datetime_now=datetime_now)
 
 

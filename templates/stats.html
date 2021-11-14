@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for link, number in links_and_numbers %}
+            {% for number, link in enumerate(links, 1) %}
                 <tr>
                     <th scope="row">{{ number }}</th>
                     <td id="short_link"><a href="{{ link.short_link }}">{{ link.short_link }}</a></td>
